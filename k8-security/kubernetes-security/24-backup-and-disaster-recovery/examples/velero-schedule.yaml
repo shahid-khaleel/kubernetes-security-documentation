@@ -1,0 +1,12 @@
+# Velero scheduled backup: daily, 30-day retention, with volume snapshots.
+apiVersion: velero.io/v1
+kind: Schedule
+metadata: { name: daily-full, namespace: velero }
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces: ["*"]
+    excludedNamespaces: ["kube-system"]
+    snapshotVolumes: true
+    ttl: 720h0m0s          # 30 days
+    storageLocation: default

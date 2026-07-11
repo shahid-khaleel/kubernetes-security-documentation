@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata: { name: pci-workload, namespace: payments }
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:     # HARD requirement
+        nodeSelectorTerms:
+          - matchExpressions:
+              - { key: pool, operator: In, values: ["pci-isolated"] }
+    podAntiAffinity:                                       # spread replicas
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector: { matchLabels: { app: payments } }
+            topologyKey: kubernetes.io/hostname
+  tolerations:                                             # tolerate the pool's taint
+    - { key: dedicated, operator: Equal, value: pci, effect: NoSchedule }
+  containers: [{ name: app, image: payments:1.0 }]

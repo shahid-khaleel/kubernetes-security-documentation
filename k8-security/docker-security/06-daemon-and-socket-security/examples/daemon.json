@@ -1,0 +1,11 @@
+{
+  "comment": "/etc/docker/daemon.json — hardened dockerd config",
+  "icc": false,
+  "userns-remap": "default",
+  "no-new-privileges": true,
+  "live-restore": true,
+  "userland-proxy": false,
+  "log-driver": "json-file",
+  "log-opts": { "max-size": "10m", "max-file": "3" },
+  "default-ulimits": { "nofile": { "Name": "nofile", "Hard": 4096, "Soft": 1024 } }
+}

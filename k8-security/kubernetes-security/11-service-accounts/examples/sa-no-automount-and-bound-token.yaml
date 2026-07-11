@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: app-sa, namespace: apps }
+automountServiceAccountToken: false      # default-deny token mounting
+---
+apiVersion: v1
+kind: Pod
+metadata: { name: needs-token, namespace: apps }
+spec:
+  serviceAccountName: app-sa
+  automountServiceAccountToken: true      # opt-in only where the API is truly needed
+  containers:
+    - name: app
+      image: bitnami/kubectl
+      command: ["sleep","1h"]
+      volumeMounts:
+        - name: token
+          mountPath: /var/run/secrets/tokens
+  volumes:
+    - name: token
+      projected:                          # short-lived, audience-bound token
+        sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 3600
+              audience: vault

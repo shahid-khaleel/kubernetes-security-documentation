@@ -1,0 +1,2 @@
+{ "comment": "/etc/docker/daemon.json — remap container root to unprivileged host uid",
+  "userns-remap": "default" }

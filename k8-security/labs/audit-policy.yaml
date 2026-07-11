@@ -1,0 +1,29 @@
+# Minimal-but-useful audit policy for the lab cluster (see K8s module 20 for the full one).
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - RequestReceived
+rules:
+  # Never log confidential token/secret reads at Request/Response level
+  - level: Metadata
+    resources:
+      - group: ""
+        resources: ["secrets", "configmaps"]
+  - level: Metadata
+    resources:
+      - group: "authentication.k8s.io"
+        resources: ["tokenreviews"]
+  # Log exec/attach/portforward at RequestResponse (high-signal for IR)
+  - level: RequestResponse
+    resources:
+      - group: ""
+        resources: ["pods/exec", "pods/attach", "pods/portforward"]
+  # Log changes to RBAC and admission-relevant objects
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: "rbac.authorization.k8s.io"
+      - group: "policy"
+      - group: "admissionregistration.k8s.io"
+  # Everything else: metadata only
+  - level: Metadata

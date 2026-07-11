@@ -1,0 +1,15 @@
+# 1) Taint the node (CLI):
+#    kubectl taint nodes node-pci dedicated=pci:NoSchedule
+# 2) Only pods tolerating it can schedule there:
+apiVersion: v1
+kind: Pod
+metadata: { name: payments }
+spec:
+  tolerations:
+    - { key: "dedicated", operator: "Equal", value: "pci", effect: "NoSchedule" }
+  affinity:                                  # + affinity to FORCE it onto the pool
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions: [{ key: pool, operator: In, values: ["pci"] }]
+  containers: [{ name: app, image: payments:1.0 }]

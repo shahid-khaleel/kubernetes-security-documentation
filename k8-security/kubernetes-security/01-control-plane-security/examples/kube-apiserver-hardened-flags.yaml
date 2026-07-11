@@ -1,0 +1,17 @@
+# Key hardened kube-apiserver flags (static pod /etc/kubernetes/manifests/kube-apiserver.yaml).
+# Verify with kube-bench (module 22). These are the high-impact CIS items.
+spec:
+  containers:
+    - command:
+        - kube-apiserver
+        - --anonymous-auth=false
+        - --authorization-mode=Node,RBAC
+        - --encryption-provider-config=/etc/kubernetes/enc/enc.yaml
+        - --audit-log-path=/var/log/kubernetes/audit/audit.log
+        - --audit-policy-file=/etc/kubernetes/audit/audit-policy.yaml
+        - --tls-min-version=VersionTLS12
+        - --profiling=false
+        - --service-account-lookup=true
+        - --request-timeout=60s
+        - --enable-admission-plugins=NodeRestriction,PodSecurity,ServiceAccount
+        - --kubelet-certificate-authority=/etc/kubernetes/pki/ca.crt

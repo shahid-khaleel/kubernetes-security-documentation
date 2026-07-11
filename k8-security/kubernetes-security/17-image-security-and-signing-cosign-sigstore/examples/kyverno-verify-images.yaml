@@ -1,0 +1,18 @@
+# Admission-time enforcement: only run images signed by our identity.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata: { name: verify-image-signatures }
+spec:
+  validationFailureAction: Enforce
+  webhookTimeoutSeconds: 30
+  rules:
+    - name: verify-signature
+      match:
+        any: [{ resources: { kinds: ["Pod"] } }]
+      verifyImages:
+        - imageReferences: ["registry.corp.example.com/*"]
+          attestors:
+            - entries:
+                - keyless:
+                    subject: "https://github.com/corp/*"
+                    issuer: "https://token.actions.githubusercontent.com"

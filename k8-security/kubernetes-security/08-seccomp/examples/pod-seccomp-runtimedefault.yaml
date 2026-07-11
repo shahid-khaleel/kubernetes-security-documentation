@@ -1,0 +1,15 @@
+# Apply the container runtime's default seccomp profile (blocks ~44 dangerous syscalls).
+apiVersion: v1
+kind: Pod
+metadata: { name: seccomp-default }
+spec:
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault          # or Localhost + localhostProfile for a custom one
+  containers:
+    - name: app
+      image: hashicorp/http-echo
+      args: ["-text=hello"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities: { drop: ["ALL"] }

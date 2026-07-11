@@ -1,0 +1,11 @@
+# NSA/CISA Kubernetes Hardening Guide — actionable checklist
+- [ ] Run containers as non-root, immutable filesystem, drop capabilities
+- [ ] Enforce Pod Security 'restricted' via PSA (module 06)
+- [ ] Network: default-deny NetworkPolicies + explicit allows (module 15)
+- [ ] Encrypt etcd at rest + TLS everywhere (modules 01,13)
+- [ ] RBAC least privilege; disable anonymous auth (modules 03,04)
+- [ ] Audit logging enabled and shipped off-cluster (module 20)
+- [ ] Scan images + admission-time signature verification (modules 17,09)
+- [ ] Patch/upgrade cadence for nodes, kubelet, control plane
+- [ ] Runtime detection (Falco/Tetragon) deployed (module 19)
+- [ ] Kubelet: anonymous-auth off, authZ Webhook, readOnlyPort 0 (module 02)

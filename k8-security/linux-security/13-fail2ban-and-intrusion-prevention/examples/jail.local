@@ -1,0 +1,14 @@
+# /etc/fail2ban/jail.local — ban brute-forcers.
+[DEFAULT]
+bantime  = 1h
+findtime = 10m
+maxretry = 5
+backend  = systemd
+[sshd]
+enabled = true
+port    = ssh
+[recidive]
+enabled  = true
+bantime  = 1w
+findtime = 1d
+maxretry = 5

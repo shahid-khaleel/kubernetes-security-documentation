@@ -1,0 +1,18 @@
+# Hardened, pinned, non-root Dockerfile (Node example).
+FROM node:20.18.1-bookworm-slim@sha256:PIN_DIGEST AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+RUN npm run build
+
+# --- minimal runtime stage ---
+FROM gcr.io/distroless/nodejs20-debian12:nonroot
+WORKDIR /app
+COPY --from=build /app/dist /app/dist
+COPY --from=build /app/node_modules /app/node_modules
+USER nonroot                           # never run as root
+EXPOSE 8080
+ENTRYPOINT ["/nodejs/bin/node", "dist/server.js"]
+# Notes: pinned base by digest, multi-stage (no build tools in final), distroless (no shell),
+# non-root user, no secrets in layers, .dockerignore excludes .git/.env (see below).

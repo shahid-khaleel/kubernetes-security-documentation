@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata: { name: gated }
+spec:
+  schedulingGates:
+    - name: security.example.com/scan-approved   # a controller removes this after approval
+  containers: [{ name: app, image: app:1.0 }]
+# Until the gate is removed the pod stays SchedulingGated (never placed).

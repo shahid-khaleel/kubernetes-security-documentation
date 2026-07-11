@@ -1,0 +1,30 @@
+# OPA Gatekeeper: only allow images from approved registries.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sallowedrepos
+spec:
+  crd:
+    spec:
+      names: { kind: K8sAllowedRepos }
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            repos: { type: array, items: { type: string } }
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sallowedrepos
+        violation[{"msg": msg}] {
+          c := input.review.object.spec.containers[_]
+          not startswith(c.image, input.parameters.repos[_])
+          msg := sprintf("image %v not from an allowed repo", [c.image])
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAllowedRepos
+metadata: { name: only-corp-registry }
+spec:
+  match: { kinds: [{ apiGroups: [""], kinds: ["Pod"] }] }
+  parameters: { repos: ["registry.corp.example.com/"] }

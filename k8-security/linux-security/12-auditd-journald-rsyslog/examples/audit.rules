@@ -1,0 +1,18 @@
+# /etc/audit/rules.d/hardening.rules — CIS-aligned high-value watches. Load: augenrules --load
+-D
+-b 8192
+-f 1
+## identity & privilege
+-w /etc/passwd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/sudoers -p wa -k priv
+-w /etc/sudoers.d/ -p wa -k priv
+## privilege escalation / perm changes
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr -F auid>=1000 -F auid!=-1 -k perm_mod
+-a always,exit -F arch=b64 -S execve -F euid=0 -F auid>=1000 -F auid!=-1 -k rootcmd
+## time & module loading (log tampering / rootkits)
+-a always,exit -F arch=b64 -S adjtimex,settimeofday -k time-change
+-w /sbin/insmod -p x -k modules
+-a always,exit -F arch=b64 -S init_module,delete_module -k modules
+## make config immutable (requires reboot to change) — last line
+-e 2

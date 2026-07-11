@@ -1,0 +1,20 @@
+# /var/lib/kubelet/config.yaml — hardened kubelet (CIS 4.2.x).
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+authentication:
+  anonymous:
+    enabled: false                    # CIS 4.2.1 — no anonymous kubelet API
+  webhook:
+    enabled: true                     # delegate authN to API server
+  x509:
+    clientCAFile: /etc/kubernetes/pki/ca.crt
+authorization:
+  mode: Webhook                       # CIS 4.2.2 — not AlwaysAllow
+readOnlyPort: 0                       # CIS 4.2.4 — disable unauth read-only :10255
+protectKernelDefaults: true           # CIS 4.2.6
+makeIPTablesUtilChains: true
+tlsCipherSuites:
+  - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+  - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+rotateCertificates: true
+serverTLSBootstrap: true

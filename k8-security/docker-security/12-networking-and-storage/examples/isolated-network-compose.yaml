@@ -1,0 +1,10 @@
+# Segment tiers into separate bridge networks; DB never on the public-facing net.
+services:
+  web:  { image: nginx:1.27-alpine, networks: [frontend], read_only: true, tmpfs: [/var/run,/var/cache/nginx] }
+  api:  { image: myapi:1.0, networks: [frontend, backend] }
+  db:   { image: postgres:16-alpine, networks: [backend], environment: [POSTGRES_PASSWORD_FILE=/run/secrets/db], secrets: [db] }
+networks:
+  frontend: {}
+  backend:  { internal: true }        # no egress to the internet
+secrets:
+  db: { file: ./db_password.txt }

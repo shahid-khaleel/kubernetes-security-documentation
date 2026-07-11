@@ -1,0 +1,6 @@
+# Mesh-wide STRICT mTLS: reject any plaintext traffic between workloads.
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata: { name: default, namespace: istio-system }
+spec:
+  mtls: { mode: STRICT }

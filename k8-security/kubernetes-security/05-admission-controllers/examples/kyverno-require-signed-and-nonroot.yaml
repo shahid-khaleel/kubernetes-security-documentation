@@ -1,0 +1,32 @@
+# Kyverno ClusterPolicy: block privileged pods & require runAsNonRoot (enforce).
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: baseline-workload-guardrails
+spec:
+  validationFailureAction: Enforce      # Audit -> Enforce after soak
+  background: true
+  rules:
+    - name: disallow-privileged
+      match:
+        any:
+          - resources: { kinds: ["Pod"] }
+      validate:
+        message: "Privileged containers are not allowed."
+        pattern:
+          spec:
+            =(securityContext):
+              =(privileged): "false"
+            containers:
+              - =(securityContext):
+                  =(privileged): "false"
+    - name: require-run-as-non-root
+      match:
+        any:
+          - resources: { kinds: ["Pod"] }
+      validate:
+        message: "runAsNonRoot must be true."
+        pattern:
+          spec:
+            securityContext:
+              runAsNonRoot: true

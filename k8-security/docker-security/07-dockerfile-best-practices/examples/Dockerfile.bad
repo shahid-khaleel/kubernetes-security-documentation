@@ -1,0 +1,8 @@
+# ❌ ANTI-PATTERN Dockerfile — every line is a lesson in what NOT to do.
+FROM ubuntu:latest                 # ❌ unpinned 'latest'
+RUN apt-get update && apt-get install -y curl sudo   # ❌ sudo, no cleanup, no pin
+ENV DB_PASSWORD=SuperSecret123     # ❌ secret baked into image layer (docker history leaks it)
+COPY . /app                        # ❌ copies .git/.env (no .dockerignore)
+RUN chmod -R 777 /app              # ❌ world-writable
+USER root                          # ❌ runs as root
+CMD curl http://get.example.com/run.sh | sh   # ❌ pipe-to-shell from network

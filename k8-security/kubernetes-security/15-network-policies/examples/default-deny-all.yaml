@@ -1,0 +1,7 @@
+# Zero-trust baseline: deny ALL ingress+egress in a namespace, then allow explicitly.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny-all, namespace: payments }
+spec:
+  podSelector: {}                 # all pods
+  policyTypes: ["Ingress", "Egress"]

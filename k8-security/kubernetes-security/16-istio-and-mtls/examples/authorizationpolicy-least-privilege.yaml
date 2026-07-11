@@ -1,0 +1,15 @@
+# L7 authZ: only the 'frontend' SA may GET/POST /api on the 'api' workload.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata: { name: api-allow, namespace: payments }
+spec:
+  selector: { matchLabels: { app: api } }
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/payments/sa/frontend"]
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/api/*"]

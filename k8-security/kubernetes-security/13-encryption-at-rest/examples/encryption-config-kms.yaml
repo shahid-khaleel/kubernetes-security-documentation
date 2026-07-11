@@ -1,0 +1,12 @@
+# KMS v2 provider — envelope encryption; the KEK never leaves the KMS/HSM.
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources: ["secrets", "configmaps"]
+    providers:
+      - kms:
+          apiVersion: v2
+          name: corp-kms
+          endpoint: unix:///var/run/kmsplugin/socket.sock
+          timeout: 3s
+      - identity: {}

@@ -1,0 +1,22 @@
+# A pod that PASSES the 'restricted' standard (use as your golden template).
+apiVersion: v1
+kind: Pod
+metadata: { name: compliant-app, namespace: payments }
+spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile: { type: RuntimeDefault }
+  containers:
+    - name: app
+      image: registry.corp.example.com/app:1.4.2@sha256:deadbeef
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 10001
+        capabilities: { drop: ["ALL"] }
+      volumeMounts:
+        - { name: tmp, mountPath: /tmp }
+  volumes:
+    - name: tmp
+      emptyDir: {}

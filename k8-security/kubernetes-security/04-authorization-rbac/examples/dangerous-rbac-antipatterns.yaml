@@ -1,0 +1,17 @@
+# ❌ ANTI-PATTERNS — do NOT ship these. Shown so you can find & flag them.
+# 1) cluster-admin to a service account = full cluster takeover from any pod using it.
+# 2) verbs ["*"] on ["*"] = same.
+# 3) 'escalate'/'bind' verbs let a user grant themselves more than they have.
+# 4) 'create' on pods + a privileged podspec = escape via workload.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: BAD-do-not-use
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin           # ❌ never bind cluster-admin to a workload SA
+  apiGroup: rbac.authorization.k8s.io

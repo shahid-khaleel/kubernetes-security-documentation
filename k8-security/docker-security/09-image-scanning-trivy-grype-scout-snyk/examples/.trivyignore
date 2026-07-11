@@ -1,0 +1,2 @@
+# Suppress accepted-risk CVEs with justification + expiry (review quarterly).
+# CVE-2024-XXXX  # accepted: not reachable in our config; expires 2026-10-01

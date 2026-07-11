@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: LimitRange
+metadata: { name: sane-defaults, namespace: tenant-a }
+spec:
+  limits:
+    - type: Container
+      default:         { cpu: "500m", memory: "512Mi" }   # applied if not set (limits)
+      defaultRequest:  { cpu: "100m", memory: "128Mi" }   # applied if not set (requests)
+      max:             { cpu: "2",    memory: "2Gi"   }    # ceiling per container
+      min:             { cpu: "50m",  memory: "64Mi"  }
+    - type: PersistentVolumeClaim
+      max: { storage: "50Gi" }

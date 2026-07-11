@@ -1,0 +1,13 @@
+# EncryptionConfiguration for the API server (--encryption-provider-config=...).
+# Encrypts Secrets at rest in etcd. aescbc shown; prefer a KMS provider in prod (module 13).
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:                       # active for WRITES (first entry)
+          keys:
+            - name: key1
+              secret: <BASE64_32_BYTE_KEY>   # head -c 32 /dev/urandom | base64
+      - identity: {}                  # fallback for reading pre-existing plaintext

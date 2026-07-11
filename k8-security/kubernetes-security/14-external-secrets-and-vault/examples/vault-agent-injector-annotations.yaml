@@ -1,0 +1,18 @@
+# Vault Agent Injector: sidecar fetches secrets to a tmpfs file (never in etcd).
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: app, namespace: payments }
+spec:
+  selector: { matchLabels: { app: app } }
+  template:
+    metadata:
+      labels: { app: app }
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "payments"
+        vault.hashicorp.com/agent-inject-secret-db: "secret/data/payments/db"
+    spec:
+      serviceAccountName: app-sa
+      containers:
+        - name: app
+          image: registry.corp.example.com/app:1.4.2

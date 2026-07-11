@@ -1,0 +1,11 @@
+# Go static binary in scratch: ~2MB image, zero OS packages, minimal attack surface.
+FROM golang:1.23-alpine AS build
+WORKDIR /src
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app ./cmd/server
+
+FROM scratch
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /app /app
+USER 10001:10001
+ENTRYPOINT ["/app"]

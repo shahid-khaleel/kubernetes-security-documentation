@@ -1,0 +1,25 @@
+# Custom Falco rules for high-signal container threats.
+- rule: Shell spawned in container
+  desc: Detect an interactive shell started inside a running container.
+  condition: >
+    spawned_process and container and shell_procs and proc.tty != 0
+    and not container.image.repository in (allowed_shell_images)
+  output: "Shell in container (user=%user.name container=%container.name image=%container.image.repository cmd=%proc.cmdline)"
+  priority: WARNING
+  tags: [container, shell, mitre_execution]
+
+- rule: Write below etc
+  desc: Detect writes to /etc inside a container (config tampering / persistence).
+  condition: >
+    open_write and container and fd.name startswith /etc
+    and not proc.name in (allowed_etc_writers)
+  output: "Write under /etc in container (file=%fd.name proc=%proc.cmdline container=%container.name)"
+  priority: ERROR
+  tags: [filesystem, mitre_persistence]
+
+- rule: Outbound connection to unexpected port
+  desc: Container initiating egress to a non-approved port (possible C2/exfil).
+  condition: outbound and container and not fd.sport in (80,443,53)
+  output: "Unexpected egress (conn=%fd.name container=%container.name proc=%proc.cmdline)"
+  priority: NOTICE
+  tags: [network, mitre_exfiltration]

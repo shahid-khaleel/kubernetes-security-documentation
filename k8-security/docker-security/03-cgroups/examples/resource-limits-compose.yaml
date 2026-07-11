@@ -1,0 +1,10 @@
+# cgroup limits stop a single container from starving the host (DoS defense).
+services:
+  api:
+    image: nginx:1.27-alpine
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 256M, pids: 200 }   # pids limit blocks fork bombs
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/var/cache/nginx, /var/run]

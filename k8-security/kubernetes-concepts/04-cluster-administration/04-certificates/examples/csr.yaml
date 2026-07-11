@@ -1,0 +1,10 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata: { name: dev-alice }
+spec:
+  request: <BASE64_CSR>                 # openssl CSR, CN=dev-alice O=developers
+  signerName: kubernetes.io/kube-apiserver-client
+  expirationSeconds: 604800            # 7 days — keep client certs SHORT
+  usages: ["client auth"]
+# Approve:  kubectl certificate approve dev-alice
+# Then bind RBAC to the CN/O (see kubernetes-security/04).

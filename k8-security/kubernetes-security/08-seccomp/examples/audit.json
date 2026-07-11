@@ -1,0 +1,12 @@
+{
+  "comment": "Custom seccomp profile: default DENY, allow a minimal syscall allowlist.",
+  "defaultAction": "SCMP_ACT_ERRNO",
+  "architectures": ["SCMP_ARCH_X86_64", "SCMP_ARCH_AARCH64"],
+  "syscalls": [
+    { "names": ["read","write","open","openat","close","fstat","stat","mmap",
+                "mprotect","munmap","brk","rt_sigaction","rt_sigprocmask","exit",
+                "exit_group","clock_gettime","futex","epoll_wait","accept4","recvfrom",
+                "sendto","socket","bind","listen","getpid","nanosleep"],
+      "action": "SCMP_ACT_ALLOW" }
+  ]
+}

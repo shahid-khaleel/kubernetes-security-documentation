@@ -1,0 +1,15 @@
+# SELinux MCS labels for stronger pod isolation on RHEL/OpenShift nodes.
+apiVersion: v1
+kind: Pod
+metadata: { name: selinux-demo }
+spec:
+  securityContext:
+    seLinuxOptions:
+      level: "s0:c123,c456"        # unique MCS category pair per tenant workload
+  containers:
+    - name: app
+      image: registry.access.redhat.com/ubi9/ubi-minimal
+      command: ["sleep","1h"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities: { drop: ["ALL"] }

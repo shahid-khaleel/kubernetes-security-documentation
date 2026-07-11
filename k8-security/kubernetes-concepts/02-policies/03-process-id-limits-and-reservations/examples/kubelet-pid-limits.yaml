@@ -1,0 +1,11 @@
+# /var/lib/kubelet/config.yaml — cap PIDs per pod and reserve PIDs for the node OS.
+# Defends against fork-bomb / PID-exhaustion DoS taking down the kubelet.
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+podPidsLimit: 1024              # max processes per pod (-1 = unlimited; DON'T on shared nodes)
+systemReserved:
+  pid: "1000"                  # PIDs reserved for the host OS
+kubeReserved:
+  pid: "1000"                  # PIDs reserved for kubelet/runtime
+evictionHard:
+  pid.available: "10%"         # start evicting when node PIDs run low
